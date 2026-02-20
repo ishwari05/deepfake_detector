@@ -36,7 +36,7 @@ ENV/
 Thumbs.db
 
 # Project specific
-*.pth
+# *.pth  # Commented out to allow model files with Git LFS
 *.zip
 temp_analysis/
 results/
