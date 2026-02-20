@@ -3,12 +3,16 @@ import torch.nn as nn
 import cv2
 import numpy as np
 import os
+import sys
 from typing import Dict, Any, Optional
 import json
 
-from explainability.gradcam import GradCAM, find_last_conv_layer, preprocess_image
-from explainability.explanation_builder import ExplanationBuilder
-from blackbox_model_wrapper import load_blackbox_model
+# Add src directory to path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from src.explainability.gradcam import GradCAM, find_last_conv_layer, preprocess_image
+from src.explainability.explanation_builder import ExplanationBuilder
+from src.utils.blackbox_model_wrapper import load_blackbox_model
 
 
 class ImageDeepfakeDetector:

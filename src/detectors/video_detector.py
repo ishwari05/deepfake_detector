@@ -3,13 +3,17 @@ import torch.nn as nn
 import cv2
 import numpy as np
 import os
+import sys
 from typing import Dict, Any, List, Optional
 import json
 import tempfile
 
-from explainability.gradcam import GradCAM, find_last_conv_layer, preprocess_image
-from explainability.explanation_builder import ExplanationBuilder
-from blackbox_model_wrapper import load_blackbox_model
+# Add src directory to path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from src.explainability.gradcam import GradCAM, find_last_conv_layer, preprocess_image
+from src.explainability.explanation_builder import ExplanationBuilder
+from src.utils.blackbox_model_wrapper import load_blackbox_model
 
 
 class VideoDeepfakeDetector:
@@ -45,6 +49,10 @@ class VideoDeepfakeDetector:
         model = load_blackbox_model(model_path, self.device)
         
         return model
+    
+    def save_frame(self, frame: np.ndarray, output_path: str):
+        """Save frame to disk."""
+        cv2.imwrite(output_path, frame)
     
     def extract_frames(self, video_path: str, max_frames: int = 30, sample_rate: int = 1) -> List[np.ndarray]:
         """
@@ -199,8 +207,8 @@ class VideoDeepfakeDetector:
         overall_fake_prob = np.mean(fake_probabilities)
         overall_real_prob = 1 - overall_fake_prob
         
-        # Determine overall classification
-        classification = "FAKE" if overall_fake_prob > 0.5 else "REAL"
+        # Determine overall classification using OPTIMIZED threshold
+        classification = "FAKE" if overall_fake_prob > 0.6 else "REAL"
         
         # Get top 3 most suspicious frames
         suspicious_frames = [r for r in valid_results if r.get('is_suspicious', False)]
